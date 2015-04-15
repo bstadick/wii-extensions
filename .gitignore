@@ -169,4 +169,4 @@ pip-log.txt
 *.nvuser
 
 #Eagle
-.[bs]#*
+*.[bs]#*
