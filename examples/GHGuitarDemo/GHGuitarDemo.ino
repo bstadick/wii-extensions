@@ -6,15 +6,15 @@
 #define BAUDRATE 9600
 
 // key bindings
-#define ORKEY 'z'
-#define BLKEY 'x'
-#define YLKEY 'c'
-#define RDKEY 'v'
-#define GRKEY 'c'
-#define UPKEY 'c'
-#define DWKEY 'c'
-#define PLKEY 'c'
-#define MNKEY 'c'
+#define ORKEY ' '
+#define BLKEY 'k'
+#define YLKEY 'j'
+#define RDKEY 'f'
+#define GRKEY 'd'
+#define UPKEY ' '
+#define DWKEY ' '
+#define PLKEY ' '
+#define MNKEY ' '
 
 // previously pressed value variables
 boolean or_pressed = false;
@@ -198,7 +198,7 @@ void loop() {
       Serial.print(", AnalogY: ");
       Serial.print(guitarStruct.analogY);
       Serial.print(", TouchBar: ");
-      Serial.print(touchToStr(guitarStruct.touchBar));
+      Serial.print(guitar.touchToStr(guitarStruct.touchBar));
       Serial.print(", WhammyBar: ");
       Serial.print(guitarStruct.whammyBar);
       Serial.print(", green: ");
@@ -227,32 +227,5 @@ void loop() {
     if(!digitalRead(KEYPIN)){
       Serial.println("Failed to get data");
     }
-  }
-}
-
-char* touchToStr(GHTouch val){
-  switch(val){
-    case GHNT:
-      return "No touch";
-    case GHF1:
-      return "Fret 1";
-    case GHF12:
-      return "Fret 1&2";
-    case GHF2:
-      return "Fret 2";
-    case GHF23:
-      return "Fret 2&3";
-    case GHF3:
-      return "Fret 3";
-    case GHF34:
-      return "Fret 3&4";
-    case GHF4:
-      return "Fret 4";
-    case GHF45:
-      return "Fret 4&5";
-    case GHF5:
-      return "Fret 5";
-    default:
-      return "No touch";
   }
 }

@@ -72,15 +72,14 @@ bool WiiExt::update()
     {
         case Nunchuk_t:
             return WiiExt::_updateNunchuk();
-            break;
         case Taiko_t:
             return WiiExt::_updateTaiko();
-            break;
         case GHGuitar_t:
             return WiiExt::_updateGHGuitar();
-            break;
+        case GHDrum_t:
+            return WiiExt::_updateGHDrum();
         default:
-            break;
+            return false;
     }
 }
 
@@ -245,6 +244,175 @@ bool WiiExt::_updateGHGuitar()
     // end request?
     WiiExt::_sendByte(0x00, 0x00);
     return true;
+}
+
+bool WiiExt::_updateGHDrum()
+{
+    int count = 0;
+    int which;
+    
+    // request data
+    if(Wire.requestFrom(ADDRESS, 6) != 6)
+        return false;
+
+    // read data
+    while(Wire.available())
+    {
+        WiiExt::_values[count] = Wire.read();
+        count++;
+    }
+
+    // parse data
+    // BUG - WT drum is missing y-axis data for analog stick (temp fix is to ignore lack of data)
+    if(false)
+    {
+        WiiExt::_values[4] = ~WiiExt::_values[4];
+        WiiExt::_values[5] = ~WiiExt::_values[5];
+        WiiExt::_ghdrum.orange = (WiiExt::_values[5] & 0x80);
+        WiiExt::_ghdrum.red = (WiiExt::_values[5] & 0x40);
+        WiiExt::_ghdrum.yellow = (WiiExt::_values[5] & 0x20);
+        WiiExt::_ghdrum.green = (WiiExt::_values[5] & 0x10);
+        WiiExt::_ghdrum.blue = (WiiExt::_values[5] & 0x08);
+        WiiExt::_ghdrum.pedal = (WiiExt::_values[5] & 0x04);
+        WiiExt::_ghdrum.minus = (WiiExt::_values[4] & 0x10);
+        WiiExt::_ghdrum.plus = (WiiExt::_values[4] & 0x04);
+        WiiExt::_ghdrum.velocity = (GHVelocity)(WiiExt::_values[3] & 0xE0);
+        WiiExt::_ghdrum.isHighHat = !(WiiExt::_values[2] & 0x80);
+        WiiExt::_ghdrum.isVelocity = !(WiiExt::_values[2] & 0x40);
+        which = (WiiExt::_values[2] & 0x3E);
+        WiiExt::_ghdrum.analogY = (WiiExt::_values[1] & 0x3F);
+        WiiExt::_ghdrum.analogX = (WiiExt::_values[0] & 0x3F);
+    }
+    else{
+        WiiExt::_values[3] = ~WiiExt::_values[3];
+        WiiExt::_values[4] = ~WiiExt::_values[4];
+        WiiExt::_ghdrum.orange = (WiiExt::_values[4] & 0x80);
+        WiiExt::_ghdrum.red = (WiiExt::_values[4] & 0x40);
+        WiiExt::_ghdrum.yellow = (WiiExt::_values[4] & 0x20);
+        WiiExt::_ghdrum.green = (WiiExt::_values[4] & 0x10);
+        WiiExt::_ghdrum.blue = (WiiExt::_values[4] & 0x08);
+        WiiExt::_ghdrum.pedal = (WiiExt::_values[4] & 0x04);
+        WiiExt::_ghdrum.minus = (WiiExt::_values[3] & 0x10);
+        WiiExt::_ghdrum.plus = (WiiExt::_values[3] & 0x04);
+        WiiExt::_ghdrum.velocity = (GHVelocity)(WiiExt::_values[2] & 0xE0);
+        WiiExt::_ghdrum.isHighHat = !(WiiExt::_values[1] & 0x80);
+        WiiExt::_ghdrum.isVelocity = !(WiiExt::_values[1] & 0x40);
+        which = (WiiExt::_values[1] & 0x3E);
+        //WiiExt::_ghdrum.analogY = (WiiExt::_values[0] & 0x3F);
+        WiiExt::_ghdrum.analogX = (WiiExt::_values[0] & 0x3F);
+    }
+    
+    // velocity present
+    if(WiiExt::_ghdrum.isVelocity)
+    {
+        switch(which)
+        {
+            case 0x1B:
+                if(WiiExt::_ghdrum.isHighHat)
+                    WiiExt::_ghdrum.velocityType = GHHH;
+                else
+                    WiiExt::_ghdrum.velocityType = GHP;
+                break;
+            case 0x19:
+                WiiExt::_ghdrum.velocityType = GHR;
+                break;
+            case 0x11:
+                WiiExt::_ghdrum.velocityType = GHY;
+                break;
+            case 0x0F:
+                WiiExt::_ghdrum.velocityType = GHB;
+                break;
+            case 0x0E:
+                WiiExt::_ghdrum.velocityType = GHO;
+                break;
+            case 0x12:
+                WiiExt::_ghdrum.velocityType = GHG;
+                break;
+            default:
+                WiiExt::_ghdrum.velocityType = GHNV;
+                break;
+        }
+    }
+    
+    // end request?
+    WiiExt::_sendByte(0x00, 0x00);
+    return true;
+}
+
+char* WiiExt::touchToStr(GHTouch value)
+{
+    switch(value)
+    {
+        case GHF1:
+            return "Fret 1";
+        case GHF12:
+            return "Fret 1&2";
+        case GHF2:
+            return "Fret 2";
+        case GHF23:
+            return "Fret 2&3";
+        case GHF3:
+            return "Fret 3";
+        case GHF34:
+            return "Fret 3&4";
+        case GHF4:
+            return "Fret 4";
+        case GHF45:
+            return "Fret 4&5";
+        case GHF5:
+            return "Fret 5";
+        case GHNT:
+        default:
+            return "No touch";
+    }
+}
+
+char* WiiExt::velTypeToStr(GHVelType value)
+{
+    switch(value)
+    {
+        case GHR:
+            return "Red";
+        case GHY:
+            return "Yellow";
+        case GHB:
+            return "Blue";
+        case GHO:
+            return "Orange";
+        case GHG:
+            return "Green";
+        case GHP:
+            return "Pedal";
+        case GHHH:
+            return "High Hat";
+        case GHNV:
+        default:
+            return "No velocity";
+    }
+}
+
+char* WiiExt::velValueToStr(GHVelocity value)
+{
+    switch(value)
+    {
+        case GHVVH:
+            return "Very Hard";
+        case GHVMH:
+            return "Medium Hard";
+        case GHVH:
+            return "Hard";
+        case GHVM:
+            return "Medium";
+        case GHVS:
+            return "Soft";
+        case GHVMS:
+            return "Medium Soft";
+        case GHVVS:
+            return "Very Soft";
+        case GHVNH:
+        default:
+            return "No Hit";
+    }
 }
 
 // send a byte of data to the controller
