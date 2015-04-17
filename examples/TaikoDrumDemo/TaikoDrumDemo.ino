@@ -5,6 +5,12 @@
 #define RELPIN 5 // pin for enabling/disabling continuous key press mode
 #define BAUDRATE 9600
 
+// key bindings
+#define RLKEY 'z'
+#define CLKEY 'x'
+#define CRKEY 'c'
+#define RRKEY 'v'
+
 // previously pressed value variables
 boolean cl_pressed = false;
 boolean cr_pressed = false;
@@ -12,7 +18,7 @@ boolean rl_pressed = false;
 boolean rr_pressed = false;
 
 // taiko drum data structure
-TaikoStruct taiko;
+TaikoStruct taikoStruct;
 
 // drum extension controller object
 WiiExt drum = WiiExt();
@@ -39,7 +45,7 @@ void loop() {
   // poll drum for update
   if(drum.update()){
     // get updated values
-    taiko = drum.getTaiko();
+    taikoStruct = drum.getTaiko();
     
     if(digitalRead(KEYPIN)){
       // keyboard enabled
@@ -47,74 +53,74 @@ void loop() {
       if(digitalRead(RELPIN)){
         // continuous key press (default keyboard action)
         
-        // left rim value (z key)
-        if(!rl_pressed & taiko.rimLeft)
-          Keyboard.press('z');
-        else if(rl_pressed & !taiko.rimLeft)
-          Keyboard.release('z');
-        rl_pressed = taiko.rimLeft;
+        // left rim value
+        if(!rl_pressed & taikoStruct.rimLeft)
+          Keyboard.press(RLKEY);
+        else if(rl_pressed & !taikoStruct.rimLeft)
+          Keyboard.release(RLKEY);
+        rl_pressed = taikoStruct.rimLeft;
         
-        // left center value (x key)
-        if(!cl_pressed & taiko.centerLeft)
-          Keyboard.press('x');
-        else if(cl_pressed & !taiko.centerLeft)
-          Keyboard.release('x');
-        cl_pressed = taiko.centerLeft;
+        // left center value
+        if(!cl_pressed & taikoStruct.centerLeft)
+          Keyboard.press(CLKEY);
+        else if(cl_pressed & !taikoStruct.centerLeft)
+          Keyboard.release(CLKEY);
+        cl_pressed = taikoStruct.centerLeft;
         
-        // right center value (c key)
-        if(!cr_pressed & taiko.centerRight)
-          Keyboard.press('c');
-        else if(cr_pressed & !taiko.centerRight)
-          Keyboard.release('c');
-        cr_pressed = taiko.centerRight;
+        // right center value
+        if(!cr_pressed & taikoStruct.centerRight)
+          Keyboard.press(CRKEY);
+        else if(cr_pressed & !taikoStruct.centerRight)
+          Keyboard.release(CRKEY);
+        cr_pressed = taikoStruct.centerRight;
         
-        // right rim value (v key)
-        if(!rr_pressed & taiko.rimRight)
-          Keyboard.press('v');
-        else if(rr_pressed & !taiko.rimRight)
-          Keyboard.release('v');
-        rr_pressed = taiko.rimRight;
+        // right rim value
+        if(!rr_pressed & taikoStruct.rimRight)
+          Keyboard.press(RRKEY);
+        else if(rr_pressed & !taikoStruct.rimRight)
+          Keyboard.release(RRKEY);
+        rr_pressed = taikoStruct.rimRight;
       }
       else{
         // discontinuous key press (release key right after press)
         
-        // left rim value (z key)
-        if(taiko.rimLeft){
-          Keyboard.press('z');
-          Keyboard.release('z');
+        // left rim value
+        if(taikoStruct.rimLeft){
+          Keyboard.press(RLKEY);
+          Keyboard.release(RLKEY);
         }
         
-        // left center value (x key)
-        if(taiko.centerLeft){
-          Keyboard.press('x');
-          Keyboard.release('x');
+        // left center value
+        if(taikoStruct.centerLeft){
+          Keyboard.press(CLKEY);
+          Keyboard.release(CLKEY);
         }
         
-        // right center value (c key)
-        if(taiko.centerRight){
-          Keyboard.press('c');
-          Keyboard.release('c');
+        // right center value
+        if(taikoStruct.centerRight){
+          Keyboard.press(CRKEY);
+          Keyboard.release(CRKEY);
         }
         
-        // right rim value (v key)
-        if(taiko.rimRight){
-          Keyboard.press('v');
-          Keyboard.release('v');
+        // right rim value
+        if(taikoStruct.rimRight){
+          Keyboard.press(RRKEY);
+          Keyboard.release(RRKEY);
         }
       }
     }
     else{
       // serial enabled
-      Serial.print("Raw: ");
-      Serial.print(drum.getValues()[4]);
-      Serial.print(" ,RL: ");
-      Serial.print(taiko.rimLeft);
+      Serial.print("RL: ");
+      Serial.print(taikoStruct.rimLeft);
       Serial.print(", CL: ");
-      Serial.print(taiko.centerLeft);
+      Serial.print(taikoStruct.centerLeft);
       Serial.print(", CR: ");
-      Serial.print(taiko.centerRight);
+      Serial.print(taikoStruct.centerRight);
       Serial.print(", RR: ");
-      Serial.println(taiko.rimRight);
+      Serial.println(taikoStruct.rimRight);
+      
+      delay(250);
     }
   }
   else{

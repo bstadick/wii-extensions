@@ -1,12 +1,3 @@
-/*
- * WiiExtDemo.ino
- *
- * Based off project by:
- * Copyright 2011-2013 Gabriel Bianconi, http://www.gabrielbianconi.com/
- * Project URL : http://www.gabrielbianconi.com/projects/ArduinoNunchuck/
- *
- */
-
 #include <Wire.h>
 #include <WiiExt.h>
 
@@ -33,20 +24,22 @@ void loop()
     nun = nunchuk.getNunchuk();
     
     // print out data
-    Serial.print("JX: ");
+    Serial.print("AnalogX: ");
     Serial.print(nun.analogX, DEC);
-    Serial.print(" JY: ");
+    Serial.print(", AnalogY: ");
     Serial.print(nun.analogY, DEC);
-    Serial.print(" AX: ");
+    Serial.print(", AccelX: ");
     Serial.print(nun.accelX, DEC);
-    Serial.print(" AY: ");
+    Serial.print(", AccelY: ");
     Serial.print(nun.accelY, DEC);
-    Serial.print(" AZ: ");
+    Serial.print(", AccelZ: ");
     Serial.print(nun.accelZ, DEC);
-    Serial.print(" BZ: ");
+    Serial.print(", Z: ");
     Serial.print(nun.zButton, DEC);
-    Serial.print(" BC: ");
+    Serial.print(", C: ");
     Serial.println(nun.cButton, DEC);
+    
+    delay(250);
   }
   else{
     Serial.println("Failed to get data");
