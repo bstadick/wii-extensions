@@ -1,9 +1,8 @@
 = Wii Extension Controller Library for Arduino =
 
-Use this library to receive data from your Wii extension controllers.
+This project is the unofficial Arduino library for Wii extension controllers.
 
-For more information about this library please visit us at
-https://bitbucket.org/bstadick/wiiext/wiki/Home
+Use this library to receive data from your Wii extension controllers.
 
 == License ==
 
