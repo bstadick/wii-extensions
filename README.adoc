@@ -4,4 +4,8 @@ This project is an unofficial Arduino library for Wii extension controllers.
 
 Use this library to receive data from your Wii extension controllers.
 
+See examples folder for example usage with various Wii extension controllers.
+
+See circuit folder for circuit board schematic to connect a Wii extension controller to an Arduino Nano.
+
 See more information on the [Wii Brew Wiki](http://wiibrew.org/wiki/Wiimote/Extension_Controllers).
