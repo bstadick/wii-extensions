@@ -9,3 +9,7 @@ See examples folder for example usage with various Wii extension controllers.
 See circuit folder for circuit board schematic to connect a Wii extension controller to an Arduino Nano.
 
 See more information on the [Wii Brew Wiki](http://wiibrew.org/wiki/Wiimote/Extension_Controllers).
+
+Project is based off of work by [Gabriel Bianconi](http://www.gabrielbianconi.com/)
+
+Wii is a trademark of [Nintendo](https://www.nintendo.com/). The author of this library does not claim any ownership or association with Nintendo or their affiliates.
